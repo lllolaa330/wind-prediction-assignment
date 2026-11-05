@@ -33,17 +33,29 @@
 <p>比较模型时，各种配置都用同一份训练集和验证集。</p>
 <p><strong>预测要求</strong>　以上公式只用于生成样本。预测新样本时，必须把输入 <i>x</i> 送入训练好的网络，由网络预测分布参数 μ 和 λ。</p>
 </section>
-<section class="sec" id="task1"><div class="num">TASK 01</div><div class="taskhead"><h2>生成数据并检查</h2><span class="score">10 分</span></div><p class="role">A 生成数据并画图，B 检查。</p><p><a href="materials/generate_data.py" download>下载数据生成程序 generate_data.py</a></p>
+<section class="sec" id="task1"><div class="num">TASK 01</div><div class="taskhead"><h2>生成数据并检查</h2><span class="score">10 分</span></div><p class="role">A 生成数据并画图，B 检查。</p>
+<h3>1. 生成数据</h3>
+<p>各组统一使用教师提供的程序和参数，只需自行设置训练集和验证集的随机种子。<a href="materials/generate_data.py" download>下载数据生成程序 generate_data.py</a></p>
 <details><summary>查看安装与运行命令</summary>
-<p>将脚本放入 <code>src/</code>。把示例中的 123 和 456 换成自己选的两个不同的非负整数，在项目根目录运行。</p>
-<pre><code>python -m pip install numpy matplotlib
+<p>把脚本放入 <code>src/</code>，将 123 和 456 换成两个不同的非负整数，在项目根目录运行。</p>
+<pre><code>python -m pip install numpy
 python src/generate_data.py --train-seed 123 --val-seed 456</code></pre>
-<p>训练集保存在 <code>data/train.npz</code>，验证集保存在 <code>data/val.npz</code>。把实际使用的两个种子记在 <code>src/README.md</code> 中。</p>
+<p>训练集保存在 <code>data/train.npz</code>，验证集保存在 <code>data/val.npz</code>。把两个种子记在 <code>src/README.md</code> 中。</p>
 </details>
-<ol><li>选一个输入分量，画两张图。风向用圆周散点图，角度表示风向，半径表示所选输入分量。风速用普通散点图，横轴取同一输入分量，纵轴为风速（m/s）。</li><li>检查风向是否在 [−π, π) 内、风速是否非负。用同一个种子再生成一次，比较两次结果。</li></ol><figure class="scatter-example">
+<h3>2. 数据检查</h3>
+<p><a href="materials/plot_data.py" download>下载示例散点图绘制程序 plot_data.py</a>。绘图代码仅供参考，可以自己写 <code>plot_data.py</code> 做更详细的分析，例如分别比较三个输入分量与风向、风速的关系。</p>
+<details><summary>查看安装与运行命令</summary>
+<p>把绘图脚本放入 <code>src/</code>。生成数据后，在项目根目录运行。</p>
+<pre><code>python -m pip install numpy matplotlib
+python src/plot_data.py</code></pre>
+<p>脚本读取 <code>data/train.npz</code>，将风向圆周图和风速散点图保存到 <code>results/</code>。</p>
+</details>
+<ul><li>选同一个输入分量，分别画风向圆周散点图和风速散点图。</li><li>检查风向是否在 [−π, π) 内、风速是否非负。用相同的种子再生成一次，检查两次的数据是否一致。</li></ul>
+<figure class="scatter-example">
 <figcaption><strong>风向圆周图与风速散点图（示例）</strong>　每个点是一条观测。圆周图用角度表示风向（正上方为 0°，顺时针增加），半径刻度表示第一个输入分量，从圆心的 −1 到外圈的 1。179° 和 −179° 落在 180° 两侧。第二张图用同一输入分量作横轴，纵轴为风速（m/s）。这里只展示一组训练数据的前 500 条（种子 510）。请用自己生成的数据作图。</figcaption>
 <div><img src="materials/wind-direction-polar.png" width="720" height="594" loading="lazy" alt="风向极坐标散点图，圆心到外圈对应输入分量从负一到一，接近正负 π 的点都位于下方"><img src="materials/speed.png" width="720" height="504" loading="lazy" alt="输入分量与风速的散点图，风速均为非负值"></div>
-</figure><p>下载 <a href="materials/plot_data.py" download>plot_data.py</a>，放入 <code>src/</code>。生成数据后，在项目根目录运行：</p><pre><code>python src/plot_data.py</code></pre><p>两张图会保存到 <code>results/</code>。绘图逻辑仅供参考，你也可以自己写 <code>plot_data.py</code>，比如比较三个输入分量各自与风向、风速的关系。</p><p><strong>提交材料</strong>　将 <code>generate_data.py</code> 和实际使用的 <code>plot_data.py</code> 放入 <code>src/</code>，两张散点图放在 <code>results/</code>。训练集和验证集用的种子记在 <code>src/README.md</code>。Q1 写在 <code>Answer</code> 里。</p><div class="question"><b>Q1 · 书面问题</b><p>同一个输入，为什么能得到不同的风向和风速？为什么 179° 和 −179° 很接近？</p></div></section>
+</figure>
+<p><strong>提交材料</strong>　将 <code>generate_data.py</code> 和实际使用的 <code>plot_data.py</code> 放入 <code>src/</code>，两张散点图放在 <code>results/</code>。训练集和验证集用的种子记在 <code>src/README.md</code>。Q1 写在 <code>Answer</code> 里。</p><div class="question"><b>Q1 · 书面问题</b><p>同一个输入，为什么能得到不同的风向和风速？为什么 179° 和 −179° 很接近？</p></div></section>
 <section class="sec" id="task2"><div class="num">TASK 02</div><div class="taskhead"><h2>建立网络与联合 NLL</h2><span class="score">30 分</span></div><p class="role">B 写网络和损失函数，A 检查。</p><ol><li>用一个共享 MLP，接两个输出分支。一个预测中心风向 μ（κ 固定为 8），另一个用 Softplus 输出正的速率 λ。</li><li><strong>手推完整的联合负对数似然（NLL）</strong>。从风向和风速的条件密度出发，写出联合密度、单个样本的 NLL 和整批样本的平均 NLL，再把损失函数写进 <code>loss.py</code>。</li><li>用同一批数据和分布参数，通过 PyTorch 的 <code>log_prob()</code> 算一次 NLL，和自己的结果核对。</li></ol><p><strong>提交材料</strong>　<code>model.py</code>、<code>loss.py</code> 和 <code>test_loss.py</code> 放在 <code>src/</code>。在 <code>Answer</code> 的 Q2 中写出联合 NLL 的<strong>手推过程</strong>，并回答下题。</p><div class="question"><b>Q2 · 书面问题</b><p>为什么 Softplus 输出的 λ 不是风速？它与平均风速有什么关系？为什么联合 NLL 可以写成两项损失之和？</p></div></section>
 <section class="sec" id="task3"><div class="num">TASK 03</div><div class="taskhead"><h2>训练与验证集调参</h2><span class="score">20 分</span></div><p class="role">A 训练模型，B 做对照实验。</p><ol><li>用 Adam 训练至少三种配置。可以改隐藏层数、每层宽度或学习率，记下每次改了什么。</li><li>用验证集 NLL 选模型。如果连续多轮没有改善，就提前停止，保留验证 NLL 最低那一轮的权重。</li><li>训练和验证损失画在同一张图上：训练用实线，验证用点线，图例写清配置。</li></ol><p><strong>提交材料</strong>　程序放在 <code>src/train.py</code>，超参数配置表和训练、验证损失曲线放在 <code>results/</code>。最佳权重 <code>best_model.pt</code> 放在提交文件夹的根目录。Q3 写在 <code>Answer</code> 里。</p><div class="question"><b>Q3 · 书面问题</b><p>为什么不能用测试集选网络超参数？如果训练损失下降而验证损失上升，这说明什么？</p></div></section>
 <section class="sec" id="task4"><div class="num">TASK 04</div><div class="taskhead"><h2>模型评价与边界反例</h2><span class="score">20 分</span></div><p class="role">B 算指标，A 核对。</p><ol><li>在验证集上算三项指标：完整联合 NLL、风向 Circular MAE 和风速 MAE。风向误差取圆周最短距离，注明用度还是弧度。</li><li>用平均风速 1/λ 算风速 MAE，单位是 m/s。</li><li>以真实风向 179°、预测风向 −179° 为例，画图比较普通 MSE 和 von Mises Loss，说明两者处理角度周期性的区别。</li><li>写一个测试接口：载入权重，输入新的 <i>x</i>，输出 μ 和 λ。</li></ol><p><strong>提交材料</strong>　评价程序和测试接口写在 <code>src/evaluate.py</code>，验证集指标表和边界反例图放在 <code>results/</code>。Q4 写在 <code>Answer</code> 里。</p><div class="question"><b>Q4 · 书面问题</b><p>即使学对了风速分布，为什么测试样本越来越多，风速 MAE 也不会趋近于零？</p></div></section>
