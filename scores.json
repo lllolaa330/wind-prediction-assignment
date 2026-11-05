@@ -1,1 +1,12 @@
-{}
+{
+ "selfcheck": {
+  "ok": true,
+  "run": "https://github.com/lllolaa330/wind-prediction-assignment/actions/runs/41958273883",
+  "team": "教师自检",
+  "epochs": 0,
+  "params": 14,
+  "nll": 15.119356968067438,
+  "angle": 131.21165809281152,
+  "speed": 2.4301070451645947
+ }
+}
