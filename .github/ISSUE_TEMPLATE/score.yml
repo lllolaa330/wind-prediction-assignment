@@ -1,0 +1,34 @@
+name: 提交打榜模型
+description: 上传权重并在教师测试集上评分（提交内容公开）
+title: "[打榜] "
+body:
+  - type: markdown
+    attributes:
+      value: "保留标题里的 [打榜]。每次提交请新开一条，队名可用昵称。"
+  - type: input
+    id: team
+    attributes:
+      label: 队名
+    validations:
+      required: true
+  - type: input
+    id: params
+    attributes:
+      label: 总参数量
+      placeholder: "填写整数，包含权重和偏置"
+    validations:
+      required: true
+  - type: input
+    id: epochs
+    attributes:
+      label: 实际训练轮次
+      placeholder: "填写实际完成的 epoch 总数"
+    validations:
+      required: true
+  - type: textarea
+    id: weights
+    attributes:
+      label: 模型附件
+      description: 将只含 best_model.pt 的 ZIP 拖到下面，等待上传完成后提交。最大 8 MiB。
+    validations:
+      required: true

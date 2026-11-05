@@ -1,0 +1,49 @@
+name: 模型打榜
+run-name: 评分 · ${{ github.event.issue.number || '教师自检' }}
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evaluate:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.issue.title, '[打榜]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: 读取提交表单和权重附件
+        if: github.event_name == 'issues'
+        run: python3 grading/intake.py
+      - name: 准备评测环境
+        run: |
+          python3 -m venv "$RUNNER_TEMP/eval"
+          "$RUNNER_TEMP/eval/bin/pip" install numpy==2.2.6
+          docker build -q -t wind-decoder -f grading/Dockerfile grading
+      - name: 准备教师自检样本
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          docker run --rm --network none wind-decoder smoke > input.pt
+          echo '{"team":"教师自检","epochs":0,"params":14}' > entry.json
+      - name: 检查权重结构
+        run: |
+          chmod 444 input.pt
+          ulimit -f 16384
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --user 65534:65534 --pids-limit 80 --memory 1g --cpus 1 --tmpfs /tmp:size=32m -e OMP_NUM_THREADS=1 -v "$PWD/input.pt:/input.pt:ro" wind-decoder decode > weights.json
+      - name: 计算测试集指标
+        id: grade
+        env:
+          TEST_SEED: ${{ secrets.WIND_TEST_SEED }}
+          OPENBLAS_NUM_THREADS: 1
+        run: '"$RUNNER_TEMP/eval/bin/python" grading/score.py'
+      - name: 更新排行榜
+        if: always() && !cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GRADED: ${{ steps.grade.outcome }}
+        run: python3 grading/publish.py

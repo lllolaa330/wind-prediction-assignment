@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>模型排行榜 · 风向与风速</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:#182e36;font:16px/1.7 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1040px;margin:auto;padding:32px clamp(16px,4vw,44px)}h1,h2{font-family:Georgia,"Songti SC",serif;line-height:1.3}h1{font-size:2.2rem;margin:20px 0 12px}h2{font-size:1.4rem;margin:28px 0 10px}a,summary{color:#166573}a{ text-underline-offset:3px}.button,button{display:inline-block;padding:7px 15px;color:#133f4c;border:1px solid #99b4b5;background:white;border-radius:4px;font:inherit;cursor:pointer;text-decoration:none}.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-variant-numeric:tabular-nums}th,td{padding:9px;text-align:left;border-bottom:1px solid #d4e0df}th{background:#f2f7f6}summary{cursor:pointer;font-weight:650}details{margin-top:16px}pre{overflow:auto;background:#f2f7f6;padding:12px}#status,.note{color:#49636d;font-size:.9rem}code{overflow-wrap:anywhere}
+</style></head><body><main><a href="./#task3">← 返回作业</a><h1>风向与风速模型排行榜</h1><p>所有模型使用同一批 2,000 条隐藏测试样本。主榜按完整联合 NLL 从低到高排列，每个提交账号保留最佳成绩。圆周 MAE 和风速 MAE 也都是越小越好。</p>
+<div class="actions"><a class="button" href="https://github.com/lllolaa330/wind-prediction-assignment/issues/new?template=score.yml">提交模型</a><button id="refresh">刷新成绩</button></div>
+<details><summary>第一次打榜？查看权重格式和提交方法</summary>
+<ol><li>用验证集选出最佳权重。打榜支持共享 MLP，输入 3 维，1～8 个全连接隐藏层，每层最多 512 个单元，统一使用 Tanh 或 ReLU。两个线性输出依次为 μ、原始速率 a，评分端计算 λ = Softplus(a) + 10⁻⁸。总参数量上限为 25 万。</li>
+<li>将已训练的模型导出。若已有标准格式，可直接把 <code>best_model.pt</code> 压缩为 ZIP。也可下载 <a href="materials/export_board.py" download>导出工具 export_board.py</a> 并放入训练脚本旁。下面以两个 Tanh 隐藏层为例，先载入最佳权重，再传入对应的线性层。<pre>from export_board import export_board
+export_board([model.shared[0], model.shared[2]], model.head, "tanh")</pre>若使用两个独立线性输出头，将 <code>model.head</code> 换成 <code>(风向头, 原始速率头)</code>。推断时的层顺序、激活函数和预处理须与评分端一致。输入使用生成脚本输出的原始三个分量。</li>
+<li>点击“提交模型”，登录 GitHub，将 ZIP 拖入“模型附件”，填好队名、参数量和实际训练轮次。等待附件上传完成后提交。队名、账号、附件及成绩公开。每组请用同一个账号提交，新模型另开一条提交记录。</li>
+<li>评测完成后成绩自动上榜。参数量由评测端核对，训练轮次由学生填报。页面每 20 秒刷新一次。排队或运行进度可在 <a href="https://github.com/lllolaa330/wind-prediction-assignment/actions/workflows/grade.yml">评分记录</a> 查看。</li></ol>
+<p class="note">权重格式为 PyTorch 字典，包含 widths（隐藏层宽度列表）、state（各层权重与偏置）和 activation（tanh 或 relu，省略时取 tanh）。ZIP 上限 8 MiB，只放 best_model.pt。</p></details>
+<h2>最佳成绩</h2><div class="scroll"><table><thead><tr><th>排名</th><th>队名</th><th>完整联合 NLL</th><th>风向 MAE（°）</th><th>风速 MAE（m/s）</th><th>总参数量</th><th>训练轮次</th></tr></thead><tbody id="best"></tbody></table></div>
+<p id="status" role="status">正在读取成绩…</p>
+<h2>最近提交</h2><div id="recent"></div>
+<p class="note">风向误差取圆周最短角距离。风速点预测取 1/λ。NLL 包含 κ = 8 的 von Mises 归一化常数和指数分布的完整损失。</p>
+<script src="leaderboard.js"></script></main></body></html>
