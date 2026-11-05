@@ -8,5 +8,16 @@
   "nll": 15.119356968067438,
   "angle": 131.21165809281152,
   "speed": 2.4301070451645947
+ },
+ "1": {
+  "ok": true,
+  "run": "https://github.com/lllolaa330/wind-prediction-assignment/actions/runs/41959823314",
+  "account": "lllolaa330",
+  "team": "example",
+  "epochs": 200,
+  "params": 690,
+  "nll": 2.6305490279269734,
+  "angle": 16.82598149894577,
+  "speed": 2.400124111533316
  }
 }
